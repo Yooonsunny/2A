@@ -1,0 +1,695 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>코바늘 게이지 노트</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<style>
+/* 실 라벨과 게이지 자: 모눈 종이 바탕, 잉크색 글자, 자 눈금의 파란색 하나 */
+:root{
+  --paper:#F3F5F2; --sheet:#FFFFFF; --ink:#1D2329; --ink-2:#5A646C; --line:#D5DBD4; --grid:#E6EAE4;
+  --accent:#2C5E8F; --accent-soft:#E2EBF4; --warn:#9A5B12; --warn-soft:#F6EBDC; --ok:#2F6B47;
+  --sans:"IBM Plex Sans KR","Apple SD Gothic Neo","Malgun Gothic",system-ui,sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,"SFMono-Regular",Menlo,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --paper:#15191C; --sheet:#1D2226; --ink:#E7EBEE; --ink-2:#9AA5AE; --line:#343C42; --grid:#262D32;
+  --accent:#7FB0E0; --accent-soft:#22313F; --warn:#E0A55A; --warn-soft:#3A2D1C; --ok:#79C29A; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --paper:#15191C; --sheet:#1D2226; --ink:#E7EBEE; --ink-2:#9AA5AE; --line:#343C42; --grid:#262D32;
+  --accent:#7FB0E0; --accent-soft:#22313F; --warn:#E0A55A; --warn-soft:#3A2D1C; --ok:#79C29A; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--paper);color:var(--ink);font-family:var(--sans);font-size:15px;line-height:1.55;
+  background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);
+  background-size:24px 24px}
+.wrap{max-width:1180px;margin:0 auto;padding-block:28px 64px;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+header.top{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:16px;margin-bottom:20px}
+h1{font-size:28px;margin:0;letter-spacing:-.01em;text-wrap:balance}
+h1 small{display:block;font-family:var(--mono);font-size:12px;font-weight:500;color:var(--ink-2);letter-spacing:.08em;margin-bottom:4px}
+.tabs{display:flex;gap:0;border:1.5px solid var(--ink);background:var(--sheet)}
+.tabs button{font:600 14px var(--sans);padding:9px 18px;border:0;background:transparent;color:var(--ink);cursor:pointer}
+.tabs button+button{border-left:1.5px solid var(--ink)}
+.tabs button[aria-selected="true"]{background:var(--ink);color:var(--sheet)}
+button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.layout{display:grid;grid-template-columns:minmax(0,380px) minmax(0,1fr);gap:20px;align-items:start}
+@media (max-width:900px){.layout{grid-template-columns:minmax(0,1fr)}}
+.panel{background:var(--sheet);border:1px solid var(--line);padding:18px;min-width:0}
+.panel+.panel{margin-top:16px}
+.label{font:600 11px var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--ink-2);margin:0 0 10px}
+h2{font-size:17px;margin:0 0 12px}
+.stack{display:flex;flex-direction:column;gap:14px}
+.yarn{border:1.5px solid var(--ink);padding:14px;display:flex;flex-direction:column;gap:12px;position:relative}
+.yarn-head{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.yarn-head strong{font-family:var(--mono);font-size:13px}
+.rm{border:0;background:transparent;color:var(--ink-2);cursor:pointer;font-size:13px;text-decoration:underline}
+.fields{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.field{display:flex;flex-direction:column;gap:4px;min-width:0}
+.field label{font-size:12.5px;color:var(--ink-2)}
+input[type=number],input[type=text]{font:500 15px var(--mono);padding:8px 10px;border:1px solid var(--line);background:var(--paper);color:var(--ink);width:100%;border-radius:0}
+.derived{font:13px var(--mono);color:var(--ink-2);display:flex;flex-wrap:wrap;gap:4px 14px}
+.derived b{color:var(--ink);font-weight:600}
+.color-row{display:flex;align-items:center;gap:10px}
+.swatch-btn{width:40px;height:28px;border:1.5px solid var(--ink);cursor:pointer;padding:0}
+.picker{display:flex;flex-direction:column;gap:8px;max-width:260px}
+.picker canvas{width:100%;display:block;cursor:crosshair;touch-action:none;border:1px solid var(--line)}
+.picker .sv{aspect-ratio:200/130}
+.picker .hue{height:16px}
+.check{display:flex;align-items:center;gap:8px;font-size:14px;cursor:pointer}
+.check input{width:18px;height:18px;accent-color:var(--accent)}
+.add{border:1.5px dashed var(--ink-2);background:transparent;color:var(--ink);padding:10px;font:600 14px var(--sans);cursor:pointer}
+.add:hover{border-color:var(--accent);color:var(--accent)}
+.hooks{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:6px}
+@media (max-width:420px){.hooks{grid-template-columns:repeat(5,minmax(0,1fr))}}
+.hook{display:flex;flex-direction:column;align-items:center;gap:4px;padding:8px 2px 6px;border:1px solid var(--line);background:var(--paper);color:var(--ink);cursor:pointer;font-family:var(--mono)}
+.hook .hole{border-radius:50%;border:1.5px solid currentColor;background:var(--sheet)}
+.hook .no{font-size:12px;font-weight:600}
+.hook .mm{font-size:10.5px;color:var(--ink-2)}
+.hook.rec{border-color:var(--accent)}
+.hook[aria-pressed="true"]{background:var(--ink);color:var(--sheet);border-color:var(--ink)}
+.hook[aria-pressed="true"] .mm{color:inherit;opacity:.75}
+.hook[aria-pressed="true"] .hole{background:var(--ink)}
+.legend-rec{font-size:12px;color:var(--ink-2);margin-top:8px;display:flex;align-items:center;gap:6px}
+.legend-rec i{width:14px;height:10px;border:1.5px solid var(--accent);display:inline-block}
+.stitches{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.st{display:flex;flex-direction:column;align-items:center;gap:6px;padding:12px 6px;border:1px solid var(--line);background:var(--paper);color:var(--ink);cursor:pointer;font:600 14px var(--sans)}
+.st small{font:11px var(--mono);color:var(--ink-2)}
+.st svg{width:28px;height:28px}
+.st[aria-pressed="true"]{border:1.5px solid var(--ink);background:var(--sheet);box-shadow:inset 0 -3px 0 var(--accent)}
+.result{display:grid;grid-template-columns:minmax(0,auto) minmax(0,1fr);gap:22px;align-items:start}
+@media (max-width:640px){.result{grid-template-columns:minmax(0,1fr)}}
+.gauge-canvas{display:block;max-width:100%}
+.readout{display:flex;flex-direction:column;gap:14px;min-width:0}
+.big{display:flex;gap:18px;flex-wrap:wrap}
+.big div{display:flex;flex-direction:column}
+.big .n{font:600 44px/1 var(--mono);font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+.big .u{font-size:13px;color:var(--ink-2);margin-top:6px}
+.range{font:13px var(--mono);color:var(--ink-2)}
+.pill{display:inline-flex;align-items:center;gap:6px;font-size:13px;padding:4px 10px;border:1px solid currentColor;width:fit-content}
+.pill.ok{color:var(--ok)}
+.pill.warn{color:var(--warn);background:var(--warn-soft)}
+.kv{display:grid;grid-template-columns:auto 1fr;gap:4px 14px;font-size:13.5px}
+.kv dt{color:var(--ink-2)}
+.kv dd{margin:0;font-family:var(--mono)}
+.toggle-row{display:flex;flex-wrap:wrap;gap:14px}
+.calc{display:grid;grid-template-columns:1fr 1fr;gap:10px;align-items:end}
+.calc-out{grid-column:1/-1;font:14px var(--mono);padding:10px 12px;background:var(--accent-soft);color:var(--ink)}
+.calc-out b{font-size:17px}
+.notes{font-size:13.5px;color:var(--ink-2);max-width:72ch}
+.notes ol{padding-left:20px;margin:6px 0 0;display:flex;flex-direction:column;gap:6px}
+.notes b{color:var(--ink);font-weight:600}
+.example{font:11px var(--mono);letter-spacing:.06em;color:var(--warn);border:1px solid currentColor;padding:1px 6px;margin-left:6px;vertical-align:middle}
+/* 배색 */
+.chips{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.chip{position:relative;display:flex;flex-direction:column;align-items:center;gap:4px}
+.chip button.c{width:48px;height:48px;border:1.5px solid var(--line);cursor:pointer;padding:0}
+.chip button.c[aria-pressed="true"]{outline:2.5px solid var(--ink);outline-offset:2px}
+.chip span{font:10.5px var(--mono);color:var(--ink-2)}
+.chip .x{position:absolute;top:-8px;right:-8px;width:20px;height:20px;border-radius:50%;border:1px solid var(--line);background:var(--sheet);color:var(--ink);font-size:12px;line-height:1;cursor:pointer;padding:0}
+.schemes{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:12px}
+.scheme{border:1px solid var(--line);padding:12px;display:flex;flex-direction:column;gap:10px;background:var(--paper)}
+.scheme.on{border:1.5px solid var(--ink)}
+.scheme h3{font-size:14px;margin:0}
+.scheme p{margin:0;font-size:12.5px;color:var(--ink-2)}
+.strip{display:flex;height:40px}
+.strip i{flex:1;position:relative}
+.strip i.have::after{content:"";position:absolute;left:50%;bottom:5px;width:6px;height:6px;margin-left:-3px;border-radius:50%;background:var(--sheet);border:1px solid var(--ink)}
+.btn{font:600 13.5px var(--sans);padding:8px 12px;border:1.5px solid var(--ink);background:var(--sheet);color:var(--ink);cursor:pointer}
+.btn.primary{background:var(--ink);color:var(--sheet)}
+.preview-wrap{overflow-x:auto}
+.pattern-canvas{display:block;max-width:100%}
+.drop{border:1.5px dashed var(--ink-2);padding:14px;display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between}
+.drop.over{border-color:var(--accent);background:var(--accent-soft)}
+.muted{color:var(--ink-2);font-size:13px}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+
+<div class="wrap">
+  <header class="top">
+    <h1><small>CROCHET GAUGE NOTE</small>코바늘 게이지 노트</h1>
+    <div class="tabs" role="tablist">
+      <button role="tab" id="tab-gauge" aria-selected="true" aria-controls="view-gauge">게이지 체크</button>
+      <button role="tab" id="tab-color" aria-selected="false" aria-controls="view-color">배색</button>
+    </div>
+  </header>
+
+  <!-- 게이지 체크 -->
+  <section id="view-gauge" role="tabpanel" aria-labelledby="tab-gauge">
+    <div class="layout">
+      <div>
+        <div class="panel">
+          <p class="label">1 · 실</p>
+          <p class="muted" style="margin:0 0 12px">연필이나 자에 실을 겹치지 않게 나란히 감고, 감은 폭을 잽니다. <span class="example">예시 값</span></p>
+          <div class="stack" id="yarns"></div>
+          <div class="stack" style="margin-top:14px">
+            <label class="check"><input type="checkbox" id="ply"> 합사 (실 여러 가닥을 함께 뜸)</label>
+            <button class="add" id="add-yarn" hidden>+ 실 추가</button>
+          </div>
+        </div>
+        <div class="panel">
+          <p class="label">2 · 코바늘 (모사용)</p>
+          <div class="hooks" id="hooks"></div>
+          <p class="legend-rec"><i></i>실 두께 기준 권장 범위</p>
+        </div>
+        <div class="panel">
+          <p class="label">3 · 뜨개 방법</p>
+          <div class="stitches" id="stitches"></div>
+        </div>
+      </div>
+
+      <div>
+        <div class="panel">
+          <p class="label">10cm × 10cm 예측 게이지</p>
+          <div class="result">
+            <canvas class="gauge-canvas" id="gauge-canvas" aria-label="10센티미터 편물 그림"></canvas>
+            <div class="readout">
+              <div class="big">
+                <div><span class="n" id="out-sts">–</span><span class="u">코 / 10cm</span></div>
+                <div><span class="n" id="out-rows">–</span><span class="u">단 / 10cm</span></div>
+              </div>
+              <div class="range" id="out-range"></div>
+              <div id="out-status"></div>
+              <dl class="kv" id="out-kv"></dl>
+              <div class="toggle-row">
+                <label class="check"><input type="checkbox" id="show-symbol"> 도안 기호로 보기</label>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel">
+          <p class="label">원하는 크기에 필요한 코와 단</p>
+          <div class="calc">
+            <div class="field"><label for="want-w">가로 (cm)</label><input type="number" id="want-w" value="20" min="1" step="0.5"></div>
+            <div class="field"><label for="want-h">세로 (cm)</label><input type="number" id="want-h" value="150" min="1" step="0.5"></div>
+            <div class="calc-out" id="calc-out"></div>
+          </div>
+        </div>
+
+        <div class="panel notes">
+          <p class="label">예측 근거</p>
+          이 값은 직접 뜬 스와치가 아니라 기준표로 계산한 예측입니다. 손땀에 따라 달라지므로, 작품을 시작하기 전에는 스와치를 떠서 확인하세요.
+          <ol>
+            <li><b>실 굵기</b>: 감은 폭 ÷ 감은 횟수 = 한 가닥 두께(mm). 1인치(25.4mm)에 몇 번 감기는지(WPI)로 바꿔 Craft Yarn Council의 WPI 표에서 굵기 단계를 찾습니다.</li>
+            <li><b>합사</b>: 실 단면적을 더한다고 보고, 합친 두께 = √(두께₁² + 두께₂² + …)로 계산합니다.</li>
+            <li><b>기준 게이지와 권장 바늘</b>: Craft Yarn Council 표준 실 굵기 표의 짧은뜨기 게이지(4인치당)와 권장 코바늘 범위를 쓰고, 단계 사이 값은 WPI에 따라 이어서 계산합니다. 4인치(10.16cm)는 10cm로 환산합니다.</li>
+            <li><b>바늘 차이</b>: 고른 바늘이 권장 바늘보다 가늘면 그만큼 코가 촘촘해진다고 보고, 코 수에 (권장 바늘 mm ÷ 고른 바늘 mm)를 곱합니다.</li>
+            <li><b>단 수</b>: 짧은뜨기는 10cm당 코 수와 단 수가 같다고 가정합니다. 긴뜨기는 한 단이 짧은뜨기의 1.5배, 한길긴뜨기는 2배 높다고 가정합니다. 기준표에 단 수가 없어 가장 오차가 큰 부분입니다.</li>
+            <li><b>0단계(레이스)</b>: 표준 표의 레이스 게이지는 한길긴뜨기 기준이라 이 단계의 예측은 정확도가 낮습니다.</li>
+          </ol>
+          <p style="margin:10px 0 0">출처: Craft Yarn Council, Standard Yarn Weight System · Wraps Per Inch 표. 코바늘 호수와 mm는 모사용 코바늘 판매처 호수표(1/0호 1.80mm – 10/0호 6.00mm).</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 배색 -->
+  <section id="view-color" role="tabpanel" aria-labelledby="tab-color" hidden>
+    <div class="layout">
+      <div>
+        <div class="panel">
+          <p class="label">내가 가진 실 색</p>
+          <p class="muted" style="margin:0 0 12px">팔레트에서 가진 실과 비슷한 색을 고르세요. 색을 누르면 그 색을 기준으로 배색을 추천합니다. <span class="example">예시 값</span></p>
+          <div class="chips" id="my-colors"></div>
+          <div style="margin-top:14px" class="stack">
+            <button class="add" id="add-color">+ 색 추가</button>
+            <div id="add-picker" hidden></div>
+            <div id="add-actions" class="chips" hidden>
+              <button class="btn primary" id="add-confirm">이 색 넣기</button>
+              <button class="btn" id="add-cancel">취소</button>
+            </div>
+          </div>
+        </div>
+        <div class="panel">
+          <p class="label">무늬</p>
+          <div class="drop" id="drop">
+            <span class="muted" id="pattern-name">예시 무늬 (마름모)</span>
+            <label class="btn" for="pattern-file" style="cursor:pointer">도안·사진 넣기</label>
+            <input type="file" id="pattern-file" accept="image/*" class="sr">
+          </div>
+          <div class="fields" style="margin-top:12px">
+            <div class="field"><label for="pattern-w">편물 가로 (cm)</label><input type="number" id="pattern-w" value="20" min="2" max="80" step="1"></div>
+            <div class="field"><label>게이지</label><div class="derived" id="pattern-gauge" style="padding-top:8px"></div></div>
+          </div>
+          <p class="muted" style="margin:10px 0 0">사진의 밝기 순서대로 실 색을 입힙니다. 어두운 부분에는 어두운 실, 밝은 부분에는 밝은 실이 들어갑니다. 게이지와 뜨개 방법은 게이지 체크 탭의 값을 씁니다.</p>
+        </div>
+      </div>
+      <div>
+        <div class="panel">
+          <p class="label">배색 추천</p>
+          <p class="muted" style="margin:0 0 12px" id="base-note"></p>
+          <div class="schemes" id="schemes"></div>
+          <p class="muted" style="margin:12px 0 0">색 아래 점은 내 실 중에 비슷한 색이 있다는 표시입니다.</p>
+        </div>
+        <div class="panel">
+          <p class="label">편물 미리보기</p>
+          <p class="muted" style="margin:0 0 10px" id="preview-note"></p>
+          <div class="preview-wrap"><canvas class="pattern-canvas" id="pattern-canvas" aria-label="배색 편물 미리보기"></canvas></div>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<script>
+(function(){
+/* ---------- 기준 데이터 ---------- */
+// 모사용 코바늘 호수표 (판매처 표 기준)
+const HOOKS=[["1/0",1.8],["2/0",2.0],["3/0",2.2],["4/0",2.5],["4.5/0",2.75],["5/0",3.0],["5.5/0",3.25],["6/0",3.5],["6.5/0",3.75],["7/0",4.0],["7.5/0",4.5],["8/0",5.0],["9/0",5.5],["10/0",6.0]];
+// Craft Yarn Council: WPI 범위 중앙값, 짧은뜨기 4인치 게이지, 권장 코바늘(mm)
+const CATS=[
+  {n:0,name:"Lace",wpi:35,g:[32,42],h:[1.5,2.25]},
+  {n:1,name:"Super Fine",wpi:22,g:[21,32],h:[2.25,3.5]},
+  {n:2,name:"Fine",wpi:15,g:[16,20],h:[3.5,4.5]},
+  {n:3,name:"Light",wpi:13,g:[12,17],h:[4.5,5.5]},
+  {n:4,name:"Medium",wpi:10.5,g:[11,14],h:[5.5,6.5]},
+  {n:5,name:"Bulky",wpi:7.5,g:[8,11],h:[6.5,9]},
+  {n:6,name:"Super Bulky",wpi:5.5,g:[7,9],h:[9,15]},
+  {n:7,name:"Jumbo",wpi:2.5,g:[4,6],h:[15,20]}
+];
+const STITCH={sc:{ko:"짧은뜨기",en:"sc",rowK:1},hdc:{ko:"긴뜨기",en:"hdc",rowK:1/1.5},dc:{ko:"한길긴뜨기",en:"dc",rowK:1/2}};
+
+/* ---------- 상태 ---------- */
+const state={
+  yarns:[{wraps:10,width:14,color:"#4F7A6A"}],
+  ply:false,
+  hook:5,             // 5/0호
+  stitch:"sc",
+  symbol:false,
+  myColors:["#4F7A6A","#EDE6D6","#B8574A","#2E3A4A"],
+  base:0,
+  previewSet:null,    // null = 내 실 색
+  previewLabel:"내 실 색",
+  patternImg:null,
+  patternName:"예시 무늬 (마름모)"
+};
+let yarnSeq=1;
+
+/* ---------- 색 유틸 ---------- */
+const clamp=(v,a,b)=>Math.min(b,Math.max(a,v));
+function hexToRgb(h){h=h.replace("#","");if(h.length===3)h=h.split("").map(c=>c+c).join("");const n=parseInt(h,16);return[(n>>16)&255,(n>>8)&255,n&255]}
+function rgbToHex(r,g,b){return"#"+[r,g,b].map(v=>Math.round(clamp(v,0,255)).toString(16).padStart(2,"0")).join("").toUpperCase()}
+function rgbToHsv(r,g,b){r/=255;g/=255;b/=255;const mx=Math.max(r,g,b),mn=Math.min(r,g,b),d=mx-mn;let h=0;if(d){if(mx===r)h=((g-b)/d)%6;else if(mx===g)h=(b-r)/d+2;else h=(r-g)/d+4;h*=60;if(h<0)h+=360}return[h,mx?d/mx:0,mx]}
+function hsvToRgb(h,s,v){const c=v*s,x=c*(1-Math.abs((h/60)%2-1)),m=v-c;let r=0,g=0,b=0;if(h<60)[r,g,b]=[c,x,0];else if(h<120)[r,g,b]=[x,c,0];else if(h<180)[r,g,b]=[0,c,x];else if(h<240)[r,g,b]=[0,x,c];else if(h<300)[r,g,b]=[x,0,c];else[r,g,b]=[c,0,x];return[(r+m)*255,(g+m)*255,(b+m)*255]}
+function rgbToHsl(r,g,b){r/=255;g/=255;b/=255;const mx=Math.max(r,g,b),mn=Math.min(r,g,b);let h=0,s=0;const l=(mx+mn)/2;if(mx!==mn){const d=mx-mn;s=l>.5?d/(2-mx-mn):d/(mx+mn);if(mx===r)h=(g-b)/d+(g<b?6:0);else if(mx===g)h=(b-r)/d+2;else h=(r-g)/d+4;h*=60}return[h,s,l]}
+function hslToHex(h,s,l){h=((h%360)+360)%360;const c=(1-Math.abs(2*l-1))*s,x=c*(1-Math.abs((h/60)%2-1)),m=l-c/2;let r=0,g=0,b=0;if(h<60)[r,g,b]=[c,x,0];else if(h<120)[r,g,b]=[x,c,0];else if(h<180)[r,g,b]=[0,c,x];else if(h<240)[r,g,b]=[0,x,c];else if(h<300)[r,g,b]=[x,0,c];else[r,g,b]=[c,0,x];return rgbToHex((r+m)*255,(g+m)*255,(b+m)*255)}
+function lum(hex){const[r,g,b]=hexToRgb(hex);return .2126*r+.7152*g+.0722*b}
+function shade(hex,k){const[r,g,b]=hexToRgb(hex);return k<0?rgbToHex(r*(1+k),g*(1+k),b*(1+k)):rgbToHex(r+(255-r)*k,g+(255-g)*k,b+(255-b)*k)}
+function dist(a,b){const[r1,g1,b1]=hexToRgb(a),[r2,g2,b2]=hexToRgb(b);const rm=(r1+r2)/2;return Math.sqrt((2+rm/256)*(r1-r2)**2+4*(g1-g2)**2+(2+(255-rm)/256)*(b1-b2)**2)}
+const cssVar=n=>getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+
+/* ---------- 팔레트 (색 고르기) ---------- */
+function makePicker(host,hex,onChange){
+  host.innerHTML='<div class="picker"><canvas class="sv" width="200" height="130"></canvas><canvas class="hue" width="200" height="16"></canvas><div class="color-row"><input type="text" maxlength="7" aria-label="색상 코드"></div></div>';
+  const sv=host.querySelector(".sv"),hue=host.querySelector(".hue"),inp=host.querySelector("input");
+  inp.id="hex-"+Math.random().toString(36).slice(2,8);
+  let [h,s,v]=rgbToHsv(...hexToRgb(hex));
+  function draw(){
+    const c=sv.getContext("2d"),W=sv.width,H=sv.height;
+    const base=rgbToHex(...hsvToRgb(h,1,1));
+    let g=c.createLinearGradient(0,0,W,0);g.addColorStop(0,"#fff");g.addColorStop(1,base);c.fillStyle=g;c.fillRect(0,0,W,H);
+    g=c.createLinearGradient(0,0,0,H);g.addColorStop(0,"rgba(0,0,0,0)");g.addColorStop(1,"#000");c.fillStyle=g;c.fillRect(0,0,W,H);
+    const x=s*W,y=(1-v)*H;c.lineWidth=2;c.strokeStyle=v>.5?"#000":"#fff";c.beginPath();c.arc(x,y,6,0,7);c.stroke();
+    const hc=hue.getContext("2d");g=hc.createLinearGradient(0,0,hue.width,0);
+    for(let i=0;i<=6;i++)g.addColorStop(i/6,rgbToHex(...hsvToRgb(i*60%360,1,1)));
+    hc.fillStyle=g;hc.fillRect(0,0,hue.width,hue.height);
+    const hx=h/360*hue.width;hc.fillStyle="#fff";hc.strokeStyle="#000";hc.lineWidth=1;hc.fillRect(hx-2,0,4,hue.height);hc.strokeRect(hx-2,.5,4,hue.height-1);
+  }
+  function emit(){const out=rgbToHex(...hsvToRgb(h,s,v));inp.value=out;onChange(out)}
+  function drag(el,fn){
+    el.addEventListener("pointerdown",e=>{el.setPointerCapture(e.pointerId);fn(e);
+      const mv=ev=>fn(ev),up=()=>{el.removeEventListener("pointermove",mv);el.removeEventListener("pointerup",up)};
+      el.addEventListener("pointermove",mv);el.addEventListener("pointerup",up)});
+  }
+  drag(sv,e=>{const r=sv.getBoundingClientRect();s=clamp((e.clientX-r.left)/r.width,0,1);v=clamp(1-(e.clientY-r.top)/r.height,0,1);draw();emit()});
+  drag(hue,e=>{const r=hue.getBoundingClientRect();h=clamp((e.clientX-r.left)/r.width,0,.9999)*360;draw();emit()});
+  inp.addEventListener("change",()=>{if(/^#?[0-9a-fA-F]{6}$/.test(inp.value.trim())){[h,s,v]=rgbToHsv(...hexToRgb(inp.value.trim()));draw();emit()}else inp.value=rgbToHex(...hsvToRgb(h,s,v))});
+  inp.value=hex.toUpperCase();draw();
+}
+
+/* ---------- 계산 ---------- */
+function yarnThickness(y){return y.wraps>0&&y.width>0?y.width/y.wraps:0}
+function combined(){
+  const ys=state.ply?state.yarns:state.yarns.slice(0,1);
+  return Math.sqrt(ys.reduce((a,y)=>a+yarnThickness(y)**2,0));
+}
+function wpiToCat(w){
+  const lg=Math.log;
+  if(w>=CATS[0].wpi){const c=CATS[0];return{near:c,g:c.g,h:c.h}}
+  if(w<=CATS[7].wpi){const c=CATS[7];return{near:c,g:c.g,h:c.h}}
+  for(let i=0;i<CATS.length-1;i++){
+    const a=CATS[i],b=CATS[i+1];
+    if(w<=a.wpi&&w>=b.wpi){
+      const t=(lg(a.wpi)-lg(w))/(lg(a.wpi)-lg(b.wpi));
+      const L=(x,y)=>x+(y-x)*t;
+      return{near:t<.5?a:b,g:[L(a.g[0],b.g[0]),L(a.g[1],b.g[1])],h:[L(a.h[0],b.h[0]),L(a.h[1],b.h[1])]};
+    }
+  }
+}
+function predict(){
+  const d=combined();
+  if(!d)return null;
+  const wpi=25.4/d, c=wpiToCat(wpi);
+  const hRec=(c.h[0]+c.h[1])/2, hook=HOOKS[state.hook][1];
+  const f=(10/10.16)*(hRec/hook);
+  const sts=[c.g[0]*f,c.g[1]*f], stsMid=(sts[0]+sts[1])/2;
+  const k=STITCH[state.stitch].rowK;
+  const rows=[sts[0]*k,sts[1]*k], rowsMid=stsMid*k;
+  return{d,wpi,cat:c.near,hRange:c.h,hRec,hook,sts,stsMid,rows,rowsMid};
+}
+const r1=v=>(Math.round(v*2)/2).toString();
+
+/* ---------- 실 입력 ---------- */
+const yarnsEl=document.getElementById("yarns");
+function renderYarns(){
+  yarnsEl.innerHTML="";
+  const list=state.ply?state.yarns:state.yarns.slice(0,1);
+  list.forEach((y,i)=>{
+    if(!y.id)y.id=yarnSeq++;
+    const box=document.createElement("div");box.className="yarn";
+    const t=yarnThickness(y);
+    box.innerHTML=`
+      <div class="yarn-head"><strong>실 ${String(i+1).padStart(2,"0")}</strong>${i>0?'<button class="rm">빼기</button>':""}</div>
+      <div class="fields">
+        <div class="field"><label for="y${y.id}-w">감은 횟수</label><input type="number" id="y${y.id}-w" min="1" step="1" value="${y.wraps}"></div>
+        <div class="field"><label for="y${y.id}-mm">감은 폭 (mm)</label><input type="number" id="y${y.id}-mm" min="0.5" step="0.5" value="${y.width}"></div>
+      </div>
+      <div class="derived"></div>
+      <div class="color-row"><button class="swatch-btn" aria-label="실 색 고르기" style="background:${y.color}"></button><span class="muted">실 색 <span style="font-family:var(--mono)">${y.color}</span></span></div>
+      <div class="pk" hidden></div>`;
+    const der=box.querySelector(".derived");
+    const upd=()=>{const tt=yarnThickness(y);der.innerHTML=tt?`한 가닥 <b>${tt.toFixed(2)}mm</b><span>WPI <b>${(25.4/tt).toFixed(1)}</b></span>`:"감은 횟수와 폭을 넣어 주세요"};
+    upd();
+    box.querySelector(`#y${y.id}-w`).addEventListener("input",e=>{y.wraps=+e.target.value;upd();update()});
+    box.querySelector(`#y${y.id}-mm`).addEventListener("input",e=>{y.width=+e.target.value;upd();update()});
+    const sw=box.querySelector(".swatch-btn"),pk=box.querySelector(".pk"),code=box.querySelector(".color-row .muted span");
+    sw.addEventListener("click",()=>{pk.hidden=!pk.hidden;if(!pk.hidden&&!pk.dataset.ready){pk.dataset.ready=1;makePicker(pk,y.color,c=>{y.color=c;sw.style.background=c;code.textContent=c;drawGauge()})}});
+    const rm=box.querySelector(".rm");
+    if(rm)rm.addEventListener("click",()=>{state.yarns.splice(i,1);renderYarns();update()});
+    yarnsEl.appendChild(box);
+  });
+}
+document.getElementById("ply").addEventListener("change",e=>{
+  state.ply=e.target.checked;
+  document.getElementById("add-yarn").hidden=!state.ply;
+  if(state.ply&&state.yarns.length<2)state.yarns.push({wraps:10,width:12,color:"#EDE6D6"});
+  renderYarns();update();
+});
+document.getElementById("add-yarn").addEventListener("click",()=>{
+  if(state.yarns.length>=5)return;
+  state.yarns.push({wraps:10,width:12,color:"#B8574A"});renderYarns();update();
+});
+
+/* ---------- 바늘 ---------- */
+const hooksEl=document.getElementById("hooks");
+HOOKS.forEach(([no,mm],i)=>{
+  const b=document.createElement("button");b.className="hook";b.id="hook-"+i;
+  const px=Math.round(mm*3.2);
+  b.innerHTML=`<span class="hole" style="width:${px}px;height:${px}px"></span><span class="no">${no}</span><span class="mm">${mm.toFixed(2)}</span>`;
+  b.setAttribute("aria-label",`${no}호 ${mm}mm`);
+  b.addEventListener("click",()=>{state.hook=i;update()});
+  hooksEl.appendChild(b);
+});
+
+/* ---------- 뜨개 방법 (기호: 짧은뜨기 X, 긴뜨기 T, 한길긴뜨기 T에 사선 하나) ---------- */
+const SYM={
+  sc:'<line x1="7" y1="7" x2="21" y2="21"/><line x1="21" y1="7" x2="7" y2="21"/>',
+  hdc:'<line x1="6" y1="5" x2="22" y2="5"/><line x1="14" y1="5" x2="14" y2="25"/>',
+  dc:'<line x1="6" y1="5" x2="22" y2="5"/><line x1="14" y1="5" x2="14" y2="25"/><line x1="9" y1="12" x2="19" y2="17"/>'
+};
+const stEl=document.getElementById("stitches");
+Object.entries(STITCH).forEach(([k,s])=>{
+  const b=document.createElement("button");b.className="st";b.id="st-"+k;
+  b.innerHTML=`<svg viewBox="0 0 28 28" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">${SYM[k]}</svg>${s.ko}<small>${s.en}</small>`;
+  b.addEventListener("click",()=>{state.stitch=k;update()});
+  stEl.appendChild(b);
+});
+document.getElementById("show-symbol").addEventListener("change",e=>{state.symbol=e.target.checked;drawGauge()});
+
+/* ---------- 코 그리기 ---------- */
+function drawStitch(ctx,x,y,w,h,type,cA,cB,lw){
+  ctx.lineWidth=lw;ctx.lineCap="round";
+  const cx=x+w/2;
+  // 아래쪽 몸통
+  ctx.strokeStyle=cB;
+  ctx.beginPath();
+  if(type==="sc"){
+    ctx.moveTo(x+w*.22,y+h*.32);ctx.lineTo(cx,y+h*.92);
+    ctx.moveTo(x+w*.78,y+h*.32);ctx.lineTo(cx,y+h*.92);
+  }else{
+    ctx.moveTo(cx-w*.13,y+h*.3);ctx.lineTo(cx-w*.13,y+h*.95);
+    ctx.moveTo(cx+w*.13,y+h*.3);ctx.lineTo(cx+w*.13,y+h*.95);
+  }
+  ctx.stroke();
+  if(type==="dc"){
+    ctx.strokeStyle=cA;ctx.beginPath();
+    ctx.moveTo(cx-w*.28,y+h*.55);ctx.lineTo(cx+w*.28,y+h*.68);ctx.stroke();
+  }
+  // 위쪽 고리 (사슬 머리)
+  ctx.strokeStyle=cA;ctx.beginPath();
+  ctx.ellipse(cx,y+Math.max(lw*.6,h*.15),w*.4,Math.min(h*.13,w*.22),0,0,Math.PI*2);ctx.stroke();
+}
+function drawSymbol(ctx,x,y,w,h,type,ink){
+  const s=Math.min(w,h)*.62, cx=x+w/2, cy=y+h/2;
+  ctx.strokeStyle=ink;ctx.lineWidth=Math.max(1,Math.min(w,h)*.07);ctx.lineCap="round";ctx.beginPath();
+  if(type==="sc"){
+    const a=Math.min(w,h)*.26;
+    ctx.moveTo(cx-a,cy-a);ctx.lineTo(cx+a,cy+a);ctx.moveTo(cx+a,cy-a);ctx.lineTo(cx-a,cy+a);
+  }else{
+    const top=y+h*.12, bot=y+h*.9, half=Math.min(w*.32,s*.45);
+    ctx.moveTo(cx-half,top);ctx.lineTo(cx+half,top);ctx.moveTo(cx,top);ctx.lineTo(cx,bot);
+    if(type==="dc"){const m=(top+bot)/2, a=half*.65;ctx.moveTo(cx-a,m-a*.45);ctx.lineTo(cx+a,m+a*.45)}
+  }
+  ctx.stroke();
+}
+function fitCanvas(cv,cssW,cssH){
+  const dpr=window.devicePixelRatio||1;
+  cv.style.width=cssW+"px";cv.style.height=cssH+"px";
+  cv.width=Math.round(cssW*dpr);cv.height=Math.round(cssH*dpr);
+  const c=cv.getContext("2d");c.setTransform(dpr,0,0,dpr,0,0);return c;
+}
+
+/* ---------- 게이지 그림 (10cm 자 눈금 포함) ---------- */
+let last=null;
+function drawGauge(){
+  const cv=document.getElementById("gauge-canvas");
+  const avail=Math.min(380,(cv.parentElement.clientWidth||380));
+  const M=30, S=Math.max(220,avail-M-6), W=M+S+6, H=M+S+6;
+  const ctx=fitCanvas(cv,W,H);
+  const ink=cssVar("--ink"),ink2=cssVar("--ink-2"),sheet=cssVar("--sheet"),acc=cssVar("--accent"),line=cssVar("--line");
+  ctx.clearRect(0,0,W,H);
+  // 자 눈금
+  ctx.fillStyle=ink2;ctx.strokeStyle=ink2;ctx.font="10px "+cssVar("--mono");ctx.textAlign="center";ctx.textBaseline="bottom";
+  for(let mm=0;mm<=100;mm++){
+    const p=M+S*mm/100, len=mm%10===0?10:(mm%5===0?7:4);
+    ctx.lineWidth=mm%10===0?1.2:.6;
+    ctx.beginPath();ctx.moveTo(p,M-1);ctx.lineTo(p,M-1-len);ctx.stroke();
+    ctx.beginPath();ctx.moveTo(M-1,p);ctx.lineTo(M-1-len,p);ctx.stroke();
+    if(mm%10===0&&mm>0&&mm<100){ctx.textBaseline="bottom";ctx.fillText(mm/10,p,M-12);}
+  }
+  ctx.textAlign="right";ctx.textBaseline="middle";
+  for(let cm=1;cm<10;cm++)ctx.fillText(cm,M-13,M+S*cm/10);
+  ctx.textAlign="left";ctx.textBaseline="bottom";ctx.fillText("cm",M+S-14,M-12);
+  // 편물
+  const p=last;
+  ctx.save();ctx.beginPath();ctx.rect(M,M,S,S);ctx.clip();
+  if(!p){ctx.fillStyle=sheet;ctx.fillRect(M,M,S,S);ctx.restore();return}
+  const ys=state.ply?state.yarns:state.yarns.slice(0,1);
+  const cols=ys.map(y=>y.color);
+  const bg=shade(cols[0],lum(cols[0])>140?-.35:.55);
+  ctx.fillStyle=bg;ctx.fillRect(M,M,S,S);
+  const cw=S/p.stsMid, ch=S/p.rowsMid;
+  const pxMm=S/100;
+  const lw=clamp(p.d*pxMm*.9,1,Math.min(cw,ch)*.42);
+  const nC=Math.ceil(p.stsMid)+1, nR=Math.ceil(p.rowsMid)+1;
+  for(let j=0;j<nR;j++)for(let i=0;i<nC;i++){
+    const x=M+i*cw, y=M+S-(j+1)*ch;
+    const a=cols[(i+j)%cols.length], b=cols[(i+j+1)%cols.length];
+    if(state.symbol){
+      ctx.fillStyle=sheet;ctx.fillRect(x,y,cw,ch);
+      ctx.strokeStyle=line;ctx.lineWidth=.5;ctx.strokeRect(x,y,cw,ch);
+      drawSymbol(ctx,x,y,cw,ch,state.stitch,ink);
+    }else{
+      drawStitch(ctx,x,y,cw,ch,state.stitch,shade(a,-.1),b,lw);
+    }
+  }
+  ctx.restore();
+  ctx.strokeStyle=ink;ctx.lineWidth=1.5;ctx.strokeRect(M,M,S,S);
+  // 10cm 표시
+  ctx.fillStyle=acc;ctx.fillRect(M,M+S+2,S,3);
+}
+
+/* ---------- 결과 ---------- */
+function update(){
+  last=predict();
+  document.querySelectorAll(".hook").forEach((b,i)=>{
+    b.setAttribute("aria-pressed",i===state.hook);
+    const mm=HOOKS[i][1];
+    b.classList.toggle("rec",!!last&&mm>=last.hRange[0]-1e-6&&mm<=last.hRange[1]+1e-6);
+  });
+  document.querySelectorAll(".st").forEach(b=>b.setAttribute("aria-pressed",b.id==="st-"+state.stitch));
+  const sE=document.getElementById("out-sts"),rE=document.getElementById("out-rows");
+  if(!last){sE.textContent="–";rE.textContent="–";document.getElementById("out-range").textContent="";document.getElementById("out-status").innerHTML="";document.getElementById("out-kv").innerHTML="";drawGauge();calc();syncPattern();return}
+  sE.textContent=r1(last.stsMid);rE.textContent=r1(last.rowsMid);
+  document.getElementById("out-range").textContent=`예측 범위 ${r1(last.sts[0])}–${r1(last.sts[1])}코 · ${r1(last.rows[0])}–${r1(last.rows[1])}단`;
+  const recNames=HOOKS.filter(h=>h[1]>=last.hRange[0]-1e-6&&h[1]<=last.hRange[1]+1e-6).map(h=>h[0]+"호");
+  const recTxt=recNames.length?`${recNames[0]}–${recNames[recNames.length-1]}`:`${last.hRange[0].toFixed(2)}–${last.hRange[1].toFixed(2)}mm (호수표 밖)`;
+  let st;
+  if(last.hook<last.hRange[0]-1e-6)st=`<span class="pill warn">권장보다 가는 바늘 · 편물이 단단해집니다</span>`;
+  else if(last.hook>last.hRange[1]+1e-6)st=`<span class="pill warn">권장보다 굵은 바늘 · 편물이 성글어집니다</span>`;
+  else st=`<span class="pill ok">권장 범위 안의 바늘</span>`;
+  document.getElementById("out-status").innerHTML=st;
+  const ys=state.ply?state.yarns:state.yarns.slice(0,1);
+  document.getElementById("out-kv").innerHTML=`
+    <dt>${ys.length>1?"합친 두께":"실 두께"}</dt><dd>${last.d.toFixed(2)}mm · WPI ${last.wpi.toFixed(1)}</dd>
+    <dt>굵기 단계</dt><dd>${last.cat.n} ${last.cat.name}에 가까움</dd>
+    <dt>권장 코바늘</dt><dd>${recTxt}</dd>
+    <dt>고른 바늘</dt><dd>${HOOKS[state.hook][0]}호 (${last.hook.toFixed(2)}mm)</dd>
+    <dt>뜨개 방법</dt><dd>${STITCH[state.stitch].ko} (${STITCH[state.stitch].en})</dd>`;
+  drawGauge();calc();syncPattern();
+}
+function calc(){
+  const o=document.getElementById("calc-out");
+  const w=+document.getElementById("want-w").value, h=+document.getElementById("want-h").value;
+  if(!last||!(w>0)||!(h>0)){o.textContent="크기를 넣어 주세요";return}
+  o.innerHTML=`시작 코 약 <b>${Math.round(w/10*last.stsMid)}</b>코 · 약 <b>${Math.round(h/10*last.rowsMid)}</b>단 <span class="muted">(${STITCH[state.stitch].ko}, 기둥코 제외)</span>`;
+}
+document.getElementById("want-w").addEventListener("input",calc);
+document.getElementById("want-h").addEventListener("input",calc);
+
+/* ---------- 탭 ---------- */
+const tabs=[["tab-gauge","view-gauge"],["tab-color","view-color"]];
+tabs.forEach(([t,v])=>document.getElementById(t).addEventListener("click",()=>{
+  tabs.forEach(([t2,v2])=>{document.getElementById(t2).setAttribute("aria-selected",t2===t);document.getElementById(v2).hidden=t2!==t});
+  if(t==="tab-color"){renderColors();drawPattern()}else drawGauge();
+}));
+
+/* ---------- 배색: 내 실 색 ---------- */
+function renderColors(){
+  const el=document.getElementById("my-colors");el.innerHTML="";
+  state.myColors.forEach((c,i)=>{
+    const w=document.createElement("div");w.className="chip";
+    w.innerHTML=`<button class="c" id="mc-${i}" style="background:${c}" aria-pressed="${i===state.base}" aria-label="${c} 기준 색으로"></button><span>${c}</span>${state.myColors.length>2?'<button class="x" aria-label="색 빼기">×</button>':""}`;
+    w.querySelector(".c").addEventListener("click",()=>{state.base=i;renderColors()});
+    const x=w.querySelector(".x");
+    if(x)x.addEventListener("click",()=>{state.myColors.splice(i,1);state.base=Math.min(state.base,state.myColors.length-1);renderColors();drawPattern()});
+    el.appendChild(w);
+  });
+  renderSchemes();
+}
+let pending="#7A6AA8";
+document.getElementById("add-color").addEventListener("click",()=>{
+  const pk=document.getElementById("add-picker");pk.hidden=false;document.getElementById("add-actions").hidden=false;
+  document.getElementById("add-color").hidden=true;
+  makePicker(pk,pending,c=>pending=c);
+});
+function closeAdd(){document.getElementById("add-picker").hidden=true;document.getElementById("add-actions").hidden=true;document.getElementById("add-color").hidden=false}
+document.getElementById("add-confirm").addEventListener("click",()=>{if(state.myColors.length<8){state.myColors.push(pending);state.base=state.myColors.length-1}closeAdd();renderColors();drawPattern()});
+document.getElementById("add-cancel").addEventListener("click",closeAdd);
+
+/* ---------- 배색 추천 (색상환 규칙) ---------- */
+function schemesFor(hex){
+  const[h,s,l]=rgbToHsl(...hexToRgb(hex));
+  const S=Math.max(s,.25);
+  return[
+    {key:"analog",name:"유사색",desc:"색상환에서 이웃한 색. 차분하고 자연스럽습니다.",cols:[hslToHex(h-30,S,l),hex,hslToHex(h+30,S,l)]},
+    {key:"comp",name:"보색",desc:"정반대 색. 대비가 강해 무늬가 또렷합니다.",cols:[hex,hslToHex(h+180,S,clamp(1-l,.25,.8))]},
+    {key:"split",name:"분할보색",desc:"보색 양옆 두 색. 대비는 살리고 덜 강합니다.",cols:[hex,hslToHex(h+150,S,l),hslToHex(h+210,S,l)]},
+    {key:"tone",name:"톤온톤",desc:"같은 색의 밝기만 달리. 한 가지 색 계열로 정리됩니다.",cols:[hslToHex(h,S,.22),hslToHex(h,S,.42),hslToHex(h,S,.64),hslToHex(h,S*.6,.86)]},
+    {key:"neutral",name:"무채색 대비",desc:"기준 색에 밝은 회색과 어두운 회색을 더합니다.",cols:[hslToHex(h,.06,.9),hex,hslToHex(h,.08,.2)]}
+  ];
+}
+function renderSchemes(){
+  const base=state.myColors[state.base];
+  document.getElementById("base-note").innerHTML=`기준 색 <span style="display:inline-block;width:12px;height:12px;background:${base};border:1px solid var(--line);vertical-align:-1px"></span> <span style="font-family:var(--mono)">${base}</span> · 내 실 색으로 보기도 할 수 있습니다.`;
+  const el=document.getElementById("schemes");el.innerHTML="";
+  const mine=document.createElement("div");mine.className="scheme"+(state.previewSet===null?" on":"");
+  mine.innerHTML=`<h3>내 실 색</h3><p>가진 실 ${state.myColors.length}가지를 그대로 씁니다.</p><div class="strip">${state.myColors.map(c=>`<i style="background:${c}"></i>`).join("")}</div><button class="btn${state.previewSet===null?" primary":""}">이 색으로 보기</button>`;
+  mine.querySelector("button").addEventListener("click",()=>{state.previewSet=null;state.previewLabel="내 실 색";renderSchemes();drawPattern()});
+  el.appendChild(mine);
+  schemesFor(base).forEach(sc=>{
+    const on=state.previewSet&&state.previewLabel===sc.name;
+    const d=document.createElement("div");d.className="scheme"+(on?" on":"");
+    d.innerHTML=`<h3>${sc.name}</h3><p>${sc.desc}</p><div class="strip">${sc.cols.map(c=>{const have=state.myColors.some(m=>dist(m,c)<90);return`<i class="${have?"have":""}" style="background:${c}" title="${c}"></i>`}).join("")}</div><button class="btn${on?" primary":""}">이 배색으로 보기</button>`;
+    d.querySelector("button").addEventListener("click",()=>{state.previewSet=sc.cols;state.previewLabel=sc.name;renderSchemes();drawPattern()});
+    el.appendChild(d);
+  });
+}
+
+/* ---------- 무늬 미리보기 ---------- */
+function samplePattern(){
+  const c=document.createElement("canvas");c.width=60;c.height=60;const x=c.getContext("2d");
+  x.fillStyle="#f2f2f2";x.fillRect(0,0,60,60);
+  const tones=["#202020","#707070","#b0b0b0"];
+  for(let r=0;r<3;r++)for(let k=0;k<3;k++){
+    const cx=10+k*20,cy=10+r*20;x.fillStyle=tones[(r+k)%3];
+    x.beginPath();x.moveTo(cx,cy-9);x.lineTo(cx+9,cy);x.lineTo(cx,cy+9);x.lineTo(cx-9,cy);x.closePath();x.fill();
+  }
+  x.fillStyle="#404040";x.fillRect(0,0,60,3);x.fillRect(0,57,60,3);
+  return c;
+}
+const sample=samplePattern();
+function syncPattern(){
+  const g=document.getElementById("pattern-gauge");
+  if(g)g.innerHTML=last?`<b>${r1(last.stsMid)}</b>코 · <b>${r1(last.rowsMid)}</b>단 / 10cm`:"–";
+  if(!document.getElementById("view-color").hidden)drawPattern();
+}
+function drawPattern(){
+  const cv=document.getElementById("pattern-canvas");
+  const note=document.getElementById("preview-note");
+  if(!last){note.textContent="게이지 체크 탭에서 실 두께를 먼저 넣어 주세요.";return}
+  const src=state.patternImg||sample;
+  const iw=src.naturalWidth||src.width, ih=src.naturalHeight||src.height;
+  const wcm=clamp(+document.getElementById("pattern-w").value||20,2,80);
+  const hcm=wcm*ih/iw;
+  let cols=Math.max(4,Math.round(wcm/10*last.stsMid)), rows=Math.max(4,Math.round(hcm/10*last.rowsMid));
+  const cap=140;if(cols>cap){rows=Math.round(rows*cap/cols);cols=cap}
+  // 축소해서 칸별 밝기 구하기
+  const t=document.createElement("canvas");t.width=cols;t.height=rows;const tx=t.getContext("2d",{willReadFrequently:true});
+  tx.drawImage(src,0,0,cols,rows);
+  const data=tx.getImageData(0,0,cols,rows).data;
+  const L=new Float32Array(cols*rows);
+  for(let i=0;i<cols*rows;i++)L[i]=.2126*data[i*4]+.7152*data[i*4+1]+.0722*data[i*4+2];
+  const pal=(state.previewSet||state.myColors).slice().sort((a,b)=>lum(a)-lum(b));
+  const sorted=Array.from(L).sort((a,b)=>a-b);
+  const th=[];for(let k=1;k<pal.length;k++)th.push(sorted[Math.floor(sorted.length*k/pal.length)]);
+  const idx=v=>{let k=0;while(k<th.length&&v>th[k])k++;return k};
+  // 칸 크기: 실제 게이지 비율 유지
+  const avail=Math.min(640,cv.parentElement.clientWidth||640);
+  const cmPx=avail/wcm;
+  const cw=cmPx*10/last.stsMid*(Math.round(wcm/10*last.stsMid)/cols), ch=cw*(last.stsMid/last.rowsMid);
+  const W=Math.round(cols*cw), H=Math.round(rows*ch);
+  const ctx=fitCanvas(cv,W,H);
+  const darkest=pal[0];
+  ctx.fillStyle=shade(darkest,-.4);ctx.fillRect(0,0,W,H);
+  const lw=clamp(last.d*(cmPx/10)*.9,1,Math.min(cw,ch)*.42);
+  for(let j=0;j<rows;j++)for(let i=0;i<cols;i++){
+    const c=pal[idx(L[j*cols+i])];
+    drawStitch(ctx,i*cw,j*ch,cw,ch,state.stitch,shade(c,-.12),c,lw);
+  }
+  note.textContent=`${state.previewLabel} · ${STITCH[state.stitch].ko} · 가로 ${wcm}cm × 세로 약 ${hcm.toFixed(1)}cm · ${cols}코 × ${rows}단`;
+}
+document.getElementById("pattern-w").addEventListener("input",drawPattern);
+function loadFile(f){
+  if(!f||!f.type.startsWith("image/"))return;
+  const r=new FileReader();
+  r.onload=()=>{const img=new Image();img.onload=()=>{state.patternImg=img;state.patternName=f.name;document.getElementById("pattern-name").textContent=f.name;drawPattern()};img.src=r.result};
+  r.readAsDataURL(f);
+}
+document.getElementById("pattern-file").addEventListener("change",e=>loadFile(e.target.files[0]));
+const drop=document.getElementById("drop");
+drop.addEventListener("dragover",e=>{e.preventDefault();drop.classList.add("over")});
+drop.addEventListener("dragleave",()=>drop.classList.remove("over"));
+drop.addEventListener("drop",e=>{e.preventDefault();drop.classList.remove("over");loadFile(e.dataTransfer.files[0])});
+
+/* ---------- 테마·크기 변화 시 다시 그리기 ---------- */
+const redraw=()=>{if(document.getElementById("view-color").hidden)drawGauge();else drawPattern()};
+try{matchMedia("(prefers-color-scheme: dark)").addEventListener("change",redraw)}catch(e){}
+new MutationObserver(redraw).observe(document.documentElement,{attributes:true,attributeFilter:["data-theme"]});
+let rt;addEventListener("resize",()=>{clearTimeout(rt);rt=setTimeout(redraw,120)});
+
+renderYarns();update();renderColors();
+})();
+</script>
+
+</body></html>
